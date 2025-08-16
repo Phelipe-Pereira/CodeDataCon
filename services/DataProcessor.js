@@ -18,6 +18,7 @@ class DataProcessor {
         this.csvPath = path.join(__dirname, '..', 'baseCsv');
         this.cache = new Map();
         this.cacheExpiry = 5 * 60 * 1000;
+        this.lastCacheClear = Date.now();
     }
 
     async readCSVFile(filename) {
@@ -300,7 +301,15 @@ class DataProcessor {
         if (!cached) return false;
         
         const now = Date.now();
-        return (now - cached.timestamp) < this.cacheExpiry;
+        const isExpired = (now - cached.timestamp) >= this.cacheExpiry;
+        const isStale = (now - this.lastCacheClear) > (10 * 60 * 1000);
+        
+        if (isExpired || isStale) {
+            this.cache.delete(key);
+            return false;
+        }
+        
+        return true;
     }
 
     getCachedData(key) {
@@ -317,6 +326,13 @@ class DataProcessor {
 
     clearCache() {
         this.cache.clear();
+        this.lastCacheClear = Date.now();
+        console.log('🧹 Cache limpo em:', new Date().toISOString());
+    }
+
+    forceRefresh() {
+        this.clearCache();
+        console.log('🔄 Forçando refresh de todos os dados...');
     }
 
     getCacheInfo() {
