@@ -18,6 +18,10 @@ module.exports = {
             const tokens = await dataProcessor.getTokens();
             const claims = await dataProcessor.getTokenClaims();
             
+            if (!Array.isArray(claims)) {
+                return res.status(500).json({ error: 'Dados de claims inválidos' });
+            }
+            
             const tokenStats = {};
             claims.forEach(claim => {
                 if (!tokenStats[claim.tokenId]) {
@@ -52,6 +56,10 @@ module.exports = {
             const claims = await dataProcessor.getTokenClaims();
             const attendees = await dataProcessor.getAttendees();
             
+            if (!Array.isArray(claims)) {
+                return res.status(500).json({ error: 'Dados de claims inválidos' });
+            }
+            
             const claimerStats = {};
             claims.forEach(claim => {
                 if (!claimerStats[claim.attendeeId]) {
@@ -84,6 +92,10 @@ module.exports = {
             const limit = parseInt(req.query.limit) || 10;
             const attendeeEvents = await dataProcessor.getAttendeeEvents();
             const attendees = await dataProcessor.getAttendees();
+            
+            if (!Array.isArray(attendeeEvents)) {
+                return res.status(500).json({ error: 'Dados de attendee events inválidos' });
+            }
             
             const attendeeStats = {};
             attendeeEvents.forEach(ae => {

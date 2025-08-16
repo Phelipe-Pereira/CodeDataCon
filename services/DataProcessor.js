@@ -169,64 +169,7 @@ class DataProcessor {
         return analytics;
     }
 
-    async getTokenClaims() {
-        const cacheKey = 'tokenClaims';
-        if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
-        }
 
-        const csvData = await this.readCSVFile('token_claim.csv');
-        const tokenClaims = csvData.map(data => TokenClaim.fromCSV(data));
-        
-        this.setCache(cacheKey, tokenClaims);
-        return tokenClaims;
-    }
-
-    async getDashboardStats() {
-        const cacheKey = 'dashboardStats';
-        if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
-        }
-
-        const [attendees, events, puzzles, tokens, puzzleAnswers, tokenClaims] = await Promise.all([
-            this.getAttendees(),
-            this.getEvents(),
-            this.getPuzzles(),
-            this.getTokens(),
-            this.getPuzzleAnswers(),
-            this.getTokenClaims()
-        ]);
-
-        const stats = DashboardStats.createFromData(
-            attendees, events, puzzles, tokens, puzzleAnswers, tokenClaims
-        );
-        
-        this.setCache(cacheKey, stats);
-        return stats;
-    }
-
-    async getEventAnalytics(eventId = null) {
-        const cacheKey = `eventAnalytics_${eventId || 'all'}`;
-        if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
-        }
-
-        const [events, attendeeEvents, puzzleAnswers, tokens, tokenClaims] = await Promise.all([
-            this.getEvents(),
-            this.getAttendeeEvents(),
-            this.getPuzzleAnswers(),
-            this.getTokens(),
-            this.getTokenClaims()
-        ]);
-
-        const targetEvents = eventId ? events.filter(e => e.id === eventId) : events;
-        const analytics = targetEvents.map(event => 
-            EventAnalytics.createFromEventData(event, attendeeEvents, puzzleAnswers, tokens, tokenClaims)
-        );
-        
-        this.setCache(cacheKey, analytics);
-        return analytics;
-    }
 
     async getAttendeeById(attendeeId) {
         const attendees = await this.getAttendees();
@@ -248,7 +191,7 @@ class DataProcessor {
         return tokens.find(token => token.id === tokenId);
     }
 
-    async getAttendeeEvents(attendeeId) {
+    async getAttendeeEventsByAttendeeId(attendeeId) {
         const attendeeEvents = await this.getAttendeeEvents();
         return attendeeEvents.filter(ae => ae.attendeeId === attendeeId);
     }
