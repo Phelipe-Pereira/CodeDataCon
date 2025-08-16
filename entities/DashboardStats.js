@@ -18,29 +18,29 @@ class DashboardStats {
         const totalTokens = tokens.length;
 
         const activeEvents = events.filter(event => {
-            const eventDate = new Date(event.date);
+            const eventDate = new Date(event.startDate);
             const today = new Date();
             return eventDate >= today;
         });
 
         const puzzleSolverStats = {};
         puzzleAnswers.forEach(answer => {
-            if (answer.isCorrect) {
-                if (!puzzleSolverStats[answer.attendeeId]) {
-                    puzzleSolverStats[answer.attendeeId] = 0;
+            if (answer.status === 'DONE') {
+                if (!puzzleSolverStats[answer.attendeeUuid]) {
+                    puzzleSolverStats[answer.attendeeUuid] = 0;
                 }
-                puzzleSolverStats[answer.attendeeId]++;
+                puzzleSolverStats[answer.attendeeUuid]++;
             }
         });
 
         const topPuzzleSolvers = Object.entries(puzzleSolverStats)
             .sort(([,a], [,b]) => b - a)
             .slice(0, 10)
-            .map(([attendeeId, count]) => {
-                const attendee = attendees.find(a => a.id === attendeeId);
+            .map(([attendeeUuid, count]) => {
+                const attendee = attendees.find(a => a.uuid === attendeeUuid);
                 return {
-                    attendeeId,
-                    name: attendee ? attendee.name : 'Unknown',
+                    attendeeUuid,
+                    name: attendee ? `Participante ${attendee.id}` : 'Unknown',
                     correctAnswers: count
                 };
             });
@@ -50,7 +50,7 @@ class DashboardStats {
             .slice(0, 10);
 
         const totalAnswers = puzzleAnswers.length;
-        const correctAnswers = puzzleAnswers.filter(answer => answer.isCorrect).length;
+        const correctAnswers = puzzleAnswers.filter(answer => answer.status === 'DONE').length;
         const puzzleCompletionRate = totalAnswers > 0 ? (correctAnswers / totalAnswers) * 100 : 0;
 
         return new DashboardStats({
