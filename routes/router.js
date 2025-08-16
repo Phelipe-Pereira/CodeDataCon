@@ -14,12 +14,28 @@ const CacheController = require('../controllers/CacheController');
 
 const router = express.Router();
 
+// Dashboard
+router.get('/dashboard/stats', DashboardStatsController.getStats);
+router.get('/dashboard/top-performers', AnalyticsController.getTopPerformers);
+
+// Attendees
 router.get('/attendees', AttendeeController.getAll);
+router.get('/attendees/:id', AttendeeController.getById);
+
+// Events
 router.get('/events', EventController.getAll);
-router.get('/attendee-events', AttendeeEventController.getAll);
+router.get('/events/:id', EventController.getById);
+router.get('/events/:id/attendees', EventController.getAttendees);
+router.get('/events/:id/analytics', EventAnalyticsController.getAnalytics);
+
+// Puzzles
 router.get('/puzzles', PuzzleController.getAll);
+router.get('/puzzles/:id', PuzzleController.getById);
 router.get('/puzzle-answers', PuzzleAnswerController.getAll);
+
+// Tokens
 router.get('/tokens', TokenController.getAll);
+router.get('/tokens/:id', TokenController.getById);
 router.get('/token-claims', TokenClaimController.getAll);
 router.get('/dashboard-stats', DashboardStatsController.getStats);
 router.get('/event-analytics/:eventId', EventAnalyticsController.getAnalytics);

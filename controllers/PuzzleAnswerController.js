@@ -5,7 +5,7 @@ module.exports = {
     async getAll(req, res) {
         try {
             const puzzleAnswers = await dataProcessor.getPuzzleAnswers();
-            res.json(puzzleAnswers);
+            res.json(puzzleAnswers.map(answer => answer.toJSON()));
         } catch (err) {
             res.status(500).json({ error: err.message });
         }

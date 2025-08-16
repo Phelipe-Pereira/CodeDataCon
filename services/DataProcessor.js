@@ -36,7 +36,7 @@ class DataProcessor {
     async getAttendees() {
         const cacheKey = 'attendees';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const csvData = await this.readCSVFile('attendee.csv');
@@ -49,7 +49,7 @@ class DataProcessor {
     async getEvents() {
         const cacheKey = 'events';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const csvData = await this.readCSVFile('event.csv');
@@ -62,7 +62,7 @@ class DataProcessor {
     async getAttendeeEvents() {
         const cacheKey = 'attendeeEvents';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const csvData = await this.readCSVFile('attendee_event.csv');
@@ -75,7 +75,7 @@ class DataProcessor {
     async getPuzzles() {
         const cacheKey = 'puzzles';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const csvData = await this.readCSVFile('puzzle.csv');
@@ -88,7 +88,7 @@ class DataProcessor {
     async getPuzzleAnswers() {
         const cacheKey = 'puzzleAnswers';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const csvData = await this.readCSVFile('puzzle_answer.csv');
@@ -101,7 +101,7 @@ class DataProcessor {
     async getTokens() {
         const cacheKey = 'tokens';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const csvData = await this.readCSVFile('token.csv');
@@ -114,7 +114,7 @@ class DataProcessor {
     async getTokenClaims() {
         const cacheKey = 'tokenClaims';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const csvData = await this.readCSVFile('token_claim.csv');
@@ -127,7 +127,7 @@ class DataProcessor {
     async getDashboardStats() {
         const cacheKey = 'dashboardStats';
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const [attendees, events, puzzles, tokens, puzzleAnswers, tokenClaims] = await Promise.all([
@@ -150,7 +150,7 @@ class DataProcessor {
     async getEventAnalytics(eventId = null) {
         const cacheKey = `eventAnalytics_${eventId || 'all'}`;
         if (this.isCacheValid(cacheKey)) {
-            return this.cache.get(cacheKey);
+            return this.getCachedData(cacheKey);
         }
 
         const [events, attendeeEvents, puzzleAnswers, tokens, tokenClaims] = await Promise.all([
@@ -169,6 +169,8 @@ class DataProcessor {
         this.setCache(cacheKey, analytics);
         return analytics;
     }
+
+
 
     async getAttendeeById(attendeeId) {
         const attendees = await this.getAttendees();
@@ -190,7 +192,7 @@ class DataProcessor {
         return tokens.find(token => token.id === tokenId);
     }
 
-    async getAttendeeEvents(attendeeId) {
+    async getAttendeeEventsByAttendeeId(attendeeId) {
         const attendeeEvents = await this.getAttendeeEvents();
         return attendeeEvents.filter(ae => ae.attendeeId === attendeeId);
     }
