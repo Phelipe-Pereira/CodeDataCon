@@ -1,17 +1,18 @@
 class PuzzleAnswer {
     constructor(data) {
         this.id = data.id;
+        this.attempts = parseInt(data.attempts) || 0;
+        this.almosts = parseInt(data.almosts) || 0;
+        this.status = data.status;
+        this.doneAt = data.done_at;
+        this.attendeeUuid = data.attendee_uuid;
         this.puzzleId = data.puzzle_id;
-        this.attendeeId = data.attendee_id;
-        this.answer = data.answer;
-        this.isCorrect = data.is_correct === 'true' || data.is_correct === true;
-        this.submittedAt = data.submitted_at;
         this.createdAt = data.created_at;
         this.updatedAt = data.updated_at;
     }
 
     static validate(data) {
-        if (!data.id || !data.puzzle_id || !data.attendee_id || !data.answer) {
+        if (!data.id || !data.attendee_uuid || !data.puzzle_id) {
             throw new Error('Dados obrigatórios não fornecidos para PuzzleAnswer');
         }
         return true;
@@ -25,11 +26,12 @@ class PuzzleAnswer {
     toJSON() {
         return {
             id: this.id,
+            attempts: this.attempts,
+            almosts: this.almosts,
+            status: this.status,
+            doneAt: this.doneAt,
+            attendeeUuid: this.attendeeUuid,
             puzzleId: this.puzzleId,
-            attendeeId: this.attendeeId,
-            answer: this.answer,
-            isCorrect: this.isCorrect,
-            submittedAt: this.submittedAt,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt
         };
